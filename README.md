@@ -45,6 +45,7 @@ Steps 1-3 above will not be necessary once `differential-privacy` library is rel
 
 ## TODO:
 
-1. Create notebooks.
-2. Add more functions when they become available.
-3. Carrots demo.
+* Add tests
+* Create notebooks
+* Add more algorithms when they are available
+* Carrots demo
