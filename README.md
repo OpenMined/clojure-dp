@@ -2,9 +2,9 @@
 
 A Clojure wrapper for the Java [differential-privacy library](https://github.com/google/differential-privacy).
 
-See [demo notebooks](https://github.com/OpenMined/org.openmined.dp/doc/clojure/).
+See [demo notebooks](https://github.com/OpenMined/org.openmined.dp/tree/notebooks/doc/clojure).
 
-## Usage
+## Installation
 
 Steps to make it work:
 
@@ -13,7 +13,7 @@ don't have it already.
 2. Download and build the Java [differential-privacy library](https://github.com/google/differential-privacy):
 ```
 git clone https://github.com/google/differential-privacy.git
-cd java
+cd differential-privacy/java/
 bazel build ...
 ```
 3. Copy `libdifferentialprivacy.jar` to your local Maven repository and
@@ -24,10 +24,23 @@ cp bazel-bin/main/com/google/privacy/differentialprivacy/libdifferentialprivacy.
 ```
 
 4. Make sure you have [leiningen](https://leiningen.org/) installed.
-5. Install the library (`lein install`) or test it in `lein repl`
-([notebooks are also available](https://github.com/OpenMined/org.openmined.dp/doc/clojure/)).
+5. Clone this repository and install the library:
 
-Example `lein repl` session:
+```
+git clone https://github.com/OpenMined/differential-privacy-clj.git
+cd differential-privacy-clj
+lein install
+```
+
+Installation steps 1-3 above will not be necessary once `differential-privacy` library is released and available from Maven Central.
+
+Installation steps 4-5 will not be necessary when differential-privacy-clj is released shortly after differential-privacy.
+
+## Usage
+
+See [notebooks](https://github.com/OpenMined/org.openmined.dp/tree/notebooks/doc/clojure)
+or try the library in `lein repl`:
+
 ```clojure
 differential-privacy-clj.core=> (load "demo")  ;; see src//differential_privacy_clj/demo.clj
 
@@ -45,9 +58,16 @@ differential-privacy-clj.core=> (bounded-sum random-numbers :lower 0 :upper 10 :
 differential-privacy-clj.core=>
 ```
 
-Installation steps 1-3 above will not be necessary once `differential-privacy` library is released and available from Maven Central.
+## Supported algorithms:
 
-Installation steps 4-5 will not be necessary when differential-privacy-clj is released shortly after differential-privacy.
+| Algorithm          | Support            |
+|--------------------|--------------------|
+| Count              | :heavy_check_mark: |
+| Sum                | :heavy_check_mark: |
+| Mean               | :white_check_mark: |
+| Variance           | :white_check_mark: |
+| Standard deviation | :white_check_mark: |
+| Order statistics (incl. min, max, and median) | :white_check_mark: |
 
 ## TODO:
 
