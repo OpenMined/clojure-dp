@@ -2,6 +2,8 @@
 
 A Clojure wrapper for the Java [differential-privacy library](https://github.com/google/differential-privacy).
 
+See [demo notebooks](https://github.com/OpenMined/org.openmined.dp/doc/clojure/).
+
 ## Usage
 
 Steps to make it work:
@@ -22,30 +24,32 @@ cp bazel-bin/main/com/google/privacy/differentialprivacy/libdifferentialprivacy.
 ```
 
 4. Make sure you have [leiningen](https://leiningen.org/) installed.
-5. Build a jar with the library (`lein uberjar`) or test it in `lein repl`
-(notebooks coming "soon").
+5. Install the library (`lein install`) or test it in `lein repl`
+([notebooks are also available](https://github.com/OpenMined/org.openmined.dp/doc/clojure/)).
 
 Example `lein repl` session:
 ```clojure
 differential-privacy-clj.core=> (load "demo")  ;; see src//differential_privacy_clj/demo.clj
 
-Private sum:	 370.53845703287516
-Private count:	 4
+True sum:	 39.5
+Private sum:	 41.26479895079683
+
+True count:	 7
+Private count:	 7
 nil
-differential-privacy-clj.core=> (def my-sum (bounded-sum :lower 0.0 :upper 10.0 :max-partitions 12 :epsilon 1.0))
-#'differential-privacy-clj.core/my-sum
-differential-privacy-clj.core=> (compute! my-sum [1.0 2.0 3.0 5.0 8.0])
-101.33194517646916
-differential-privacy-clj.core=> (compute! my-sum)
-IllegalStateException The result can be calculated and returned only once.  com.google.privacy.differentialprivacy.BoundedSum.computeResult (BoundedSum.java:106)
+differential-privacy-clj.core=> ;; DP sum of 100 random numbers between 0.0 and 10.0:
+differential-privacy-clj.core=> (def random-numbers (take 100 (repeatedly #(rand 10.0))))
+#'differential-privacy-clj.core/random-numbers
+differential-privacy-clj.core=> (bounded-sum random-numbers :lower 0 :upper 10 :max-partitions 1 :epsilon 1)
+494.8682999070588
+differential-privacy-clj.core=>
 ```
 
+Installation steps 1-3 above will not be necessary once `differential-privacy` library is released and available from Maven Central.
 
-Steps 1-3 above will not be necessary once `differential-privacy` library is released and available from Maven Central.
+Installation steps 4-5 will not be necessary when differential-privacy-clj is released shortly after differential-privacy.
 
 ## TODO:
 
 * Add tests
-* Create notebooks
 * Add more algorithms when they are available
-* Carrots demo
