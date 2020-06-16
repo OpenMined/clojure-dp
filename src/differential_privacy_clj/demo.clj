@@ -10,11 +10,11 @@
 (def private-sum (dp/bounded-sum example-data
                                  :lower 0.0
                                  :upper 15.0
-                                 :max-partitions 1
+                                 :max-partitions-contributed 1
                                  :epsilon 1.0))
 
 (def private-count (dp/count example-data
-                             :max-partitions 1
+                             :max-partitions-contributed 1
                              :epsilon 1.0))
 
 (println)

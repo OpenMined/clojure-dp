@@ -1,9 +1,10 @@
 (ns differential-privacy-clj.core
   (:import [com.google.privacy.differentialprivacy
-            BoundedSum Count LaplaceNoise GaussianNoise]
+            BoundedMean BoundedSum Count LaplaceNoise GaussianNoise]
            [com.google.protobuf
             InvalidProtocolBufferException])
   (:refer-clojure :rename {count size}))  ;; "count" is used for private count in this ns
+
 
 (def default-data-chunk-size
   ;; It makes sense to have a multiplication of 32 here.
@@ -11,26 +12,96 @@
   ;; (chunks) of size 32.
   32000)
 
-(defn bounded-sum [data-seq
-                   & {:keys [lower upper max-partitions epsilon chunk-size]
-                      :or {chunk-size default-data-chunk-size}}]
-  {:pre [lower upper max-partitions epsilon]}
-  (let [bsm (-> (BoundedSum/builder)
-                (.lower lower)
-                (.upper upper)
-                (.maxPartitionsContributed max-partitions)
-                (.epsilon epsilon)
-                .build)]
-    (doseq [chunk (partition-all chunk-size data-seq)]
-      (.addEntries bsm chunk))
-    (.computeResult bsm)))
+(def optional-kwargs
+  #{:chunk-size
+    :delta
+    :noise})
+
+(def bounded-sum-required-kwargs
+  #{:lower
+    :upper
+    :max-partitions-contributed
+    :epsilon})
+
+(def bounded-mean-required-kwargs
+  #{:lower
+    :upper
+    :max-partitions-contributed
+    :max-contributions-per-partition
+    :epsilon})
+
+(def count-required-kwargs
+  #{:max-partitions-contributed
+    :epsilon})
 
 
-(defn count [data-seq & {:keys [max-partitions epsilon]}]
-  {:pre [max-partitions epsilon]}
+(defn validate-keyword-arguments [passed-kwargs required-kwargs]
+  (let [missing-kwargs (remove (into optional-kwargs passed-kwargs)
+                               required-kwargs)
+        extra-kwargs (remove (into optional-kwargs required-kwargs)
+                             passed-kwargs)]
+    (when (not-empty missing-kwargs)
+      (throw (IllegalArgumentException.
+              (str "Missing keyword arguments: "
+                   (clojure.string/join ", " missing-kwargs)))))
+    (when (not-empty extra-kwargs)
+      (throw (IllegalArgumentException.
+              (str "Unexpected keyword arguments: "
+                   (clojure.string/join ", " extra-kwargs)))))))
+
+
+(defn bounded-algorithm [data-seq
+                         algo-builder
+                         required-kwargs
+                         & {:keys [lower upper max-partitions-contributed
+                                   max-contributions-per-partition
+                                   epsilon delta noise chunk-size]
+                            :or {chunk-size default-data-chunk-size}
+                            :as kwargs}]
+  (validate-keyword-arguments (keys kwargs)
+                              required-kwargs)
+  (let [algo (-> algo-builder
+                 (.lower lower)
+                 (.upper upper)
+                 (.maxPartitionsContributed max-partitions-contributed)
+                 (.epsilon epsilon)
+                 (cond->
+                  delta (.delta delta)
+                  max-contributions-per-partition (.maxContributionsPerPartition
+                                                   max-contributions-per-partition)
+                  noise (.noise noise))
+                 .build)]
+    (doseq [data-chunk (partition-all chunk-size data-seq)]
+      (.addEntries algo data-chunk))
+    (.computeResult algo)))
+
+
+(defn bounded-sum [data-seq & args]
+  (apply bounded-algorithm
+         data-seq
+         (BoundedSum/builder)
+         bounded-sum-required-kwargs
+         args))
+
+
+(defn bounded-mean [data-seq & args]
+  (apply bounded-algorithm
+         data-seq
+         (BoundedMean/builder)
+         bounded-mean-required-kwargs
+         args))
+
+
+(defn count [data-seq
+             & {:keys [max-partitions-contributed epsilon delta noise] :as kwargs}]
+  (validate-keyword-arguments (keys kwargs)
+                              count-required-kwargs)
   (let [cnt (-> (Count/builder)
-                (.maxPartitionsContributed max-partitions)
+                (.maxPartitionsContributed max-partitions-contributed)
                 (.epsilon epsilon)
+                (cond->
+                 delta (.delta delta)
+                 noise (.noise noise))
                 .build)]
     (.incrementBy cnt (size data-seq))
     (.computeResult cnt)))

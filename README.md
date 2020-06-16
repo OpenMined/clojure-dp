@@ -53,7 +53,7 @@ nil
 differential-privacy-clj.core=> ;; DP sum of 100 random numbers between 0.0 and 10.0:
 differential-privacy-clj.core=> (def random-numbers (take 100 (repeatedly #(rand 10.0))))
 #'differential-privacy-clj.core/random-numbers
-differential-privacy-clj.core=> (bounded-sum random-numbers :lower 0 :upper 10 :max-partitions 1 :epsilon 1)
+differential-privacy-clj.core=> (bounded-sum random-numbers :lower 0 :upper 10 :max-partitions-contributed 1 :epsilon 1)
 494.8682999070588
 differential-privacy-clj.core=>
 ```
@@ -64,7 +64,7 @@ differential-privacy-clj.core=>
 |--------------------|--------------------|
 | Count              | :heavy_check_mark: |
 | Sum                | :heavy_check_mark: |
-| Mean               | :white_check_mark: |
+| Mean               | :heavy_check_mark: |
 | Variance           | :white_check_mark: |
 | Standard deviation | :white_check_mark: |
 | Order statistics (incl. min, max, and median) | :white_check_mark: |
