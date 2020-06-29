@@ -1,4 +1,4 @@
-(defproject differential-privacy-clj "0.2.0-SNAPSHOT"
+(defproject differential-privacy-clj "0.2.1-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://github.com/OpenMined/differential-privacy-clj"
   :license {:name "Apache License"

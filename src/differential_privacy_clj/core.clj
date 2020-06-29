@@ -92,7 +92,7 @@
          args))
 
 
-(defn count [data-seq
+(defn count [data-seq-or-cnt
              & {:keys [max-partitions-contributed epsilon delta noise] :as kwargs}]
   (validate-keyword-arguments (keys kwargs)
                               count-required-kwargs)
@@ -103,7 +103,9 @@
                  delta (.delta delta)
                  noise (.noise noise))
                 .build)]
-    (.incrementBy cnt (size data-seq))
+    (.incrementBy cnt (if (number? data-seq-or-cnt)
+                        data-seq-or-cnt
+                        (size data-seq-or-cnt)))
     (.computeResult cnt)))
 
 
