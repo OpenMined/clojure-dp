@@ -6,56 +6,70 @@ See [online demo notebooks](https://mybinder.org/v2/gh/OpenMined/org.openmined.d
 
 ## Installation
 
-Steps to make it work:
+Steps to build it locally:
 
-1. Install [Bazel](https://docs.bazel.build/versions/master/install.html) if you
-don't have it already.
+1. Make sure you have [Maven](https://maven.apache.org/), [Bazel](https://docs.bazel.build/versions/master/install.html) and [Leiningen](https://leiningen.org/) installed.
+
 2. Download and build the Java [differential-privacy library](https://github.com/google/differential-privacy):
 ```
 git clone https://github.com/google/differential-privacy.git
 cd differential-privacy/java/
 bazel build ...
 ```
-3. Copy `libdifferentialprivacy.jar` to your local Maven repository and
-rename it to `libdifferentialprivacy-1.0.jar`:
-```
-mkdir -p ~/.m2/repository/com/google/privacy/differentialprivacy/libdifferentialprivacy/1.0/
-cp bazel-bin/main/com/google/privacy/differentialprivacy/libdifferentialprivacy.jar ~/.m2/repository/com/google/privacy/differentialprivacy/libdifferentialprivacy/1.0/libdifferentialprivacy-1.0.jar
-```
 
-4. Make sure you have [leiningen](https://leiningen.org/) installed.
-5. Clone this repository and install the library:
+3. Install `libdifferentialprivacy.jar` in your local Maven repository:
 
 ```
-git clone https://github.com/OpenMined/differential-privacy-clj.git
-cd differential-privacy-clj
+mvn install:install-file -Dfile=bazel-bin/main/com/google/privacy/differentialprivacy/libdifferentialprivacy.jar -DgroupId=com.google.privacy.differentialprivacy -DartifactId=libdifferentialprivacy -Dversion=1.0 -Dpackaging=jar
+```
+
+4. Clone this repository and install the library:
+
+```
+git clone https://github.com/OpenMined/clojure-dp.git
+cd clojure-dp
 lein install
 ```
 
-Installation steps 1-3 above will not be necessary once `differential-privacy` library is released and available from Maven Central.
-
-Installation steps 4-5 will not be necessary when differential-privacy-clj is released shortly after differential-privacy.
-
 ## Usage
 
-See [notebooks](https://github.com/OpenMined/org.openmined.dp/tree/notebooks/doc/clojure) (also [available online](https://mybinder.org/v2/gh/OpenMined/org.openmined.dp/live_notebooks?filepath=%2Fdoc%2Fclojure))
-or try the library in `lein repl`:
+See [demo notebooks](https://github.com/OpenMined/org.openmined.dp/tree/live_notebooks/doc/clojure) ([run online](https://mybinder.org/v2/gh/OpenMined/org.openmined.dp/live_notebooks?filepath=%2Fdoc%2Fclojure)).
+
+Examples:
 
 ```clojure
-differential-privacy-clj.core=> (load "demo")  ;; see src//differential_privacy_clj/demo.clj
+(require '[differential-privacy-clj.core :as dp])
 
-True sum:	 39.5
-Private sum:	 41.26479895079683
+(def example-data (take 1000 (repeatedly #(rand 10.0))))
 
-True count:	 7
-Private count:	 7
-nil
-differential-privacy-clj.core=> ;; DP sum of 100 random numbers between 0.0 and 10.0:
-differential-privacy-clj.core=> (def random-numbers (take 100 (repeatedly #(rand 10.0))))
-#'differential-privacy-clj.core/random-numbers
-differential-privacy-clj.core=> (bounded-sum random-numbers :lower 0 :upper 10 :max-partitions-contributed 1 :epsilon 1)
-494.8682999070588
-differential-privacy-clj.core=>
+(println "True sum: "
+         (reduce + example-data))
+(println "DP sum:   "
+         (dp/bounded-sum example-data :epsilon 0.1
+                         :lower 0 :upper 10
+                         :max-partitions-contributed 1))
+
+(println "True count:"
+         (count example-data))
+(println "DP count:  "
+         (dp/count example-data :epsilon 0.1
+                   :max-partitions-contributed 1))
+
+(println "True mean:" (/ (reduce + example-data)
+                         (count example-data)))
+(println "DP mean:" (dp/bounded-mean example-data :epsilon 0.1
+                                     :lower 0 :upper 10
+                                     :max-partitions-contributed 1
+                                     :max-contributions-per-partition 1))
+```
+will print something like:
+```
+True sum:  4988.542973798648
+DP sum:    5175.075793958153
+True count: 1000
+DP count:   999
+True mean: 4.988542973798648
+DP mean: 5.002603661455349
 ```
 
 ## Supported algorithms:
@@ -68,8 +82,3 @@ differential-privacy-clj.core=>
 | Variance           | :white_check_mark: |
 | Standard deviation | :white_check_mark: |
 | Order statistics (incl. min, max, and median) | :white_check_mark: |
-
-## TODO:
-
-* Add tests
-* Add more algorithms when they are available
