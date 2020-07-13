@@ -72,9 +72,11 @@ True mean: 4.988542973798648
 DP mean: 5.002603661455349
 ```
 
-## Supported algorithms:
+## Available algorithms:
 
-| Algorithm          | Support            |
+:heavy_check_mark: - Supported :white_check_mark: - Planned
+
+| Algorithm          |                    |
 |--------------------|--------------------|
 | Count              | :heavy_check_mark: |
 | Sum                | :heavy_check_mark: |
@@ -82,3 +84,8 @@ DP mean: 5.002603661455349
 | Variance           | :white_check_mark: |
 | Standard deviation | :white_check_mark: |
 | Order statistics (incl. min, max, and median) | :white_check_mark: |
+
+
+## Support
+
+For support in using this library, please join the **#lib_dp_java** Slack channel. If you’d like to follow along with any code changes to the library, please join the **#code_dp_java** Slack channel. [Click here to join our Slack community!](https://slack.openmined.org)
