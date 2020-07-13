@@ -1,4 +1,8 @@
 (ns differential-privacy-clj.core
+  ^{:doc "A collection of differentially private algorithms.
+
+          This library is a wrapper for Google differential-privacy
+          https://github.com/google/differential-privacy"}
   (:import [com.google.privacy.differentialprivacy
             BoundedMean BoundedSum Count LaplaceNoise GaussianNoise]
            [com.google.protobuf
@@ -35,7 +39,7 @@
     :epsilon})
 
 
-(defn validate-keyword-arguments [passed-kwargs required-kwargs]
+(defn- validate-keyword-arguments [passed-kwargs required-kwargs]
   (let [missing-kwargs (remove (into optional-kwargs passed-kwargs)
                                required-kwargs)
         extra-kwargs (remove (into optional-kwargs required-kwargs)
@@ -50,14 +54,14 @@
                    (clojure.string/join ", " extra-kwargs)))))))
 
 
-(defn bounded-algorithm [data-seq
-                         algo-builder
-                         required-kwargs
-                         & {:keys [lower upper max-partitions-contributed
-                                   max-contributions-per-partition
-                                   epsilon delta noise chunk-size]
-                            :or {chunk-size default-data-chunk-size}
-                            :as kwargs}]
+(defn- bounded-algorithm [data-seq
+                          algo-builder
+                          required-kwargs
+                          & {:keys [lower upper max-partitions-contributed
+                                    max-contributions-per-partition
+                                    epsilon delta noise chunk-size]
+                             :or {chunk-size default-data-chunk-size}
+                             :as kwargs}]
   (validate-keyword-arguments (keys kwargs)
                               required-kwargs)
   (let [algo (-> algo-builder
@@ -76,7 +80,43 @@
     (.computeResult algo)))
 
 
-(defn bounded-sum [data-seq & args]
+(defn bounded-sum
+  "
+  Calculates a differentially private sum for a sequence of values.
+
+  Example: (bounded-sum [1 2 3 5] :epsilon 0.1
+                                  :lower 0 :upper 10
+                                  :max-partitions-contributed 1)
+
+
+  Required keyword arguments:
+
+    :epsilon - Epsilon DP parameter.
+
+    :lower - Lower bound for the entries added to the sum. Any data values
+             below this value will be clamped (i.e. set) to this bound.
+
+    :upper - Upper bound for the entries added to the sum. Any data value
+             above this value will be clamped (i.e. set) to this bound.
+
+    :max-partitions-contributed - Maximum number of partitions to which
+                                  a single privacy unit (e.g. an individual)
+                                  is allowed to contribute.
+
+
+  Optional keyword arguments:
+
+    :delta - Delta DP parameter (ignored when Laplace noise is used).
+
+    :noise - Distribution from which the noise will be generated and added
+             to the sum (e.g. `(GaussianNoise.)`).
+             The Java library underneath will use `LaplaceNoise` by default.
+
+    :chunk-size - Data is added in chunks of this size when specified.
+                  The default value is `default-data-chunk-size`.
+
+  "
+  [data-seq & args]
   (apply bounded-algorithm
          data-seq
          (BoundedSum/builder)
@@ -84,7 +124,48 @@
          args))
 
 
-(defn bounded-mean [data-seq & args]
+(defn bounded-mean
+  "
+  Calculates a differentially private average for a sequence of values.
+
+
+  Example:
+
+    (bounded-mean [1 2 3 4 5] :epsilon 0.1
+                              :lower 0 :upper 10
+                              :max-partitions-contributed 1
+                              :max-contributions-per-partition 1)
+
+  Required keyword arguments:
+
+    :epsilon - Epsilon DP parameter.
+
+    :lower - Lower bound for the entries added to the mean. Any data values
+             below this value will be clamped (i.e. set) to this bound.
+
+    :upper - Upper bound for the entries added to the sum. Any data value
+             above this value will be clamped (i.e. set) to this bound.
+
+    :max-partitions-contributed - Maximum number of partitions a single privacy unit
+                                  (e.g. an individual) is allowed to contribute to.
+
+    :max-contributions-per-partition - Maximum number of contributions per partition
+                                       from a single privacy unit (e.g. an individual).
+
+
+  Optional keyword arguments:
+
+    :delta - Delta DP parameter (ignored when Laplace noise is used).
+
+    :noise - Distribution from which the noise will be generated and added
+             to the average (e.g. `(GaussianNoise.)`).
+             The Java library underneath will use `LaplaceNoise` by default.
+
+    :chunk-size - Data is processed in chunks of this size when specified.
+                  The default value is `default-data-chunk-size`.
+
+  "
+  [data-seq & args]
   (apply bounded-algorithm
          data-seq
          (BoundedMean/builder)
@@ -92,8 +173,43 @@
          args))
 
 
-(defn count [data-seq-or-cnt
-             & {:keys [max-partitions-contributed epsilon delta noise] :as kwargs}]
+(defn count
+  "
+  Calculates a differentially private count given a sequence of values
+  or the true count.
+
+  This function assumes that each privacy unit may contribute to a single
+  partition only once (i.e. only one data contribution per privacy unit
+  per partition).
+
+  Examples:
+
+    (count [1 2 3 4 5] :epsilon 0.1
+                       :max-partitions-contributed 1)
+
+    (count 5 :epsilon 0.1
+             :max-partitions-contributed 1)
+
+
+  Required keyword arguments:
+
+    :max-partitions-contributed - Maximum number of partitions a single privacy unit
+                                  (e.g. an individual) is allowed to contribute to.
+
+    :epsilon - Epsilon DP parameter.
+
+
+  Optional keyword arguments:
+
+    :delta - Delta DP parameter (ignored when Laplace noise is used).
+
+    :noise - Distribution from which the noise will be generated and added
+             to the average (e.g. `(GaussianNoise.)`).
+             The Java library underneath will use `LaplaceNoise` by default.
+
+  "
+  [data-seq-or-cnt
+   & {:keys [max-partitions-contributed epsilon delta noise] :as kwargs}]
   (validate-keyword-arguments (keys kwargs)
                               count-required-kwargs)
   (let [cnt (-> (Count/builder)
@@ -109,6 +225,15 @@
     (.computeResult cnt)))
 
 
-(defn laplace-noise [] (LaplaceNoise.))
+(defn laplace-noise
+  "
+  Generates Laplace noise.
+  "
+  [] (LaplaceNoise.))
 
-(defn gaussian-noise [] (GaussianNoise.))
+
+(defn gaussian-noise
+  "
+  Generates Gaussian noise.
+  "
+  [] (GaussianNoise.))
