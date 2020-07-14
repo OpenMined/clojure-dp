@@ -1,0 +1,22 @@
+name: Clojure DP CI workflow
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install maven
+        run: sudo apt install maven
+      - name: Download the Java library
+        run: wget http://replomancer.net/OpenMined/libdifferentialprivacy-1.0.jar
+      - name: Install the Java library to local Maven repo
+        run: mvn install:install-file -Dfile=libdifferentialprivacy-1.0.jar -DgroupId=com.google.privacy.differentialprivacy -DartifactId=libdifferentialprivacy -Dversion=1.0 -Dpackaging=jar
+      - name: Install remaining dependencies
+        run: lein deps
+      - name: Check formatting
+        run: lein cljfmt check
+      - name: Run tests
+        run: lein test
