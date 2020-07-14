@@ -2,7 +2,7 @@
 
 A Clojure wrapper for the Java [differential-privacy library](https://github.com/google/differential-privacy).
 
-See [online demo notebooks](https://mybinder.org/v2/gh/OpenMined/org.openmined.dp/live_notebooks?filepath=%2Fdoc%2Fclojure).
+See [online demo notebooks](https://mybinder.org/v2/gh/OpenMined/JavaDP/master/?filepath=%2Fdoc%2Fclojure).
 
 ## Installation
 
@@ -33,7 +33,7 @@ lein install
 
 ## Usage
 
-See [demo notebooks](https://github.com/OpenMined/org.openmined.dp/tree/live_notebooks/doc/clojure) ([run online](https://mybinder.org/v2/gh/OpenMined/org.openmined.dp/live_notebooks?filepath=%2Fdoc%2Fclojure)).
+See [demo notebooks](https://github.com/OpenMined/JavaDP/tree/master/doc/clojure) ([run online](https://mybinder.org/v2/gh/OpenMined/JavaDP/master/?filepath=%2Fdoc%2Fclojure)).
 
 Examples:
 
