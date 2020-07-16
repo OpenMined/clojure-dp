@@ -1,4 +1,4 @@
-name: Clojure DP CI workflow
+name: Tests
 
 on: [push]
 
