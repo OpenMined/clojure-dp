@@ -10,7 +10,8 @@
                  [com.google.privacy.differentialprivacy/libdifferentialprivacy "1.0"]]
   :repl-options {:init-ns differential-privacy-clj.core}
 
-  :profiles {:dev {:plugins [[lein-cljfmt "0.6.8"]]}}
+  :profiles {:dev {:plugins [[lein-cljfmt "0.6.8"]
+                             [lein-cloverage "1.1.2"]]}}
 
   ;; formatting:
   :cljfmt {:remove-consecutive-blank-lines? false})

@@ -1,5 +1,6 @@
 # differential-privacy-clj
 ![](https://github.com/OpenMined/clojure-dp/workflows/Tests/badge.svg)
+[![codecov](https://codecov.io/gh/OpenMined/clojure-dp/branch/master/graph/badge.svg)](https://codecov.io/gh/OpenMined/clojure-dp)
 
 A Clojure wrapper for the Java [differential-privacy library](https://github.com/google/differential-privacy).
 
