@@ -1,10 +1,6 @@
 name: Tests
 
-on:
-  push:
-    branches: [ $default-branch ]
-  pull_request:
-    branches: [ $default-branch ]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -24,3 +20,7 @@ jobs:
         run: lein cljfmt check
       - name: Run tests
         run: lein test
+      - name: Generate coverage report
+        run: lein cloverage --codecov
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
