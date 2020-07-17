@@ -89,4 +89,4 @@ DP mean: 5.002603661455349
 
 ## Support
 
-For support in using this library, please join the **#lib_dp_java** Slack channel. If you’d like to follow along with any code changes to the library, please join the **#code_dp_java** Slack channel. [Click here to join our Slack community!](https://slack.openmined.org)
+For support in using this library, please join the **#lib_dp_java** Slack channel. If you’d like to follow along with any code changes to the library, please join the **#code_dp_clojure** Slack channel. [Click here to join our Slack community!](https://slack.openmined.org)
