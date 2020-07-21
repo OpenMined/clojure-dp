@@ -16,13 +16,15 @@ Steps to build it locally:
 ```
 git clone https://github.com/google/differential-privacy.git
 cd differential-privacy/java/
-bazel build ...
+bazel build "..."
 ```
 
-3. Install `libdifferentialprivacy.jar` in your local Maven repository:
+3. Install `libdifferentialprivacy.jar` and `libsummary-proto-speed.jar` in your local Maven repository:
 
 ```
 mvn install:install-file -Dfile=bazel-bin/main/com/google/privacy/differentialprivacy/libdifferentialprivacy.jar -DgroupId=com.google.privacy.differentialprivacy -DartifactId=libdifferentialprivacy -Dversion=1.0 -Dpackaging=jar
+
+mvn install:install-file -Dfile=bazel-bin/external/com_google_differential_privacy/proto/libsummary-proto-speed.jar -DgroupId=com.google.differentialprivacy -DartifactId=libsummary-proto-speed -Dversion=1.0 -Dpackaging=jar
 ```
 
 4. Clone this repository and install the library:
