@@ -7,7 +7,8 @@
                  [com.google.protobuf/protobuf-java "3.11.4"]
                  [org.apache.commons/commons-math3 "3.6.1"]
                  [com.google.guava/guava "28.2-jre"]
-                 [com.google.privacy.differentialprivacy/libdifferentialprivacy "1.0"]]
+                 [com.google.privacy.differentialprivacy/libdifferentialprivacy "1.0"]
+                 [com.google.differentialprivacy/libsummary-proto-speed "1.0"]]
   :repl-options {:init-ns differential-privacy-clj.core}
 
   :profiles {:dev {:plugins [[lein-cljfmt "0.6.8"]

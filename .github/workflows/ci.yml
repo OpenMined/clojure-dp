@@ -10,10 +10,12 @@ jobs:
       - uses: actions/checkout@v1
       - name: Install maven
         run: sudo apt install maven
-      - name: Download the Java library
-        run: wget http://replomancer.net/OpenMined/libdifferentialprivacy-1.0.jar
+      - name: Download the Java library and protobuf jar
+        run: wget http://replomancer.net/OpenMined/libdifferentialprivacy-1.0.jar http://replomancer.net/OpenMined/libsummary-proto-speed.jar
       - name: Install the Java library to local Maven repo
         run: mvn install:install-file -Dfile=libdifferentialprivacy-1.0.jar -DgroupId=com.google.privacy.differentialprivacy -DartifactId=libdifferentialprivacy -Dversion=1.0 -Dpackaging=jar
+      - name: Install the protobuf jar to local Maven repo
+        run: mvn install:install-file -Dfile=libsummary-proto-speed.jar -DgroupId=com.google.differentialprivacy -DartifactId=libsummary-proto-speed -Dversion=1.0 -Dpackaging=jar
       - name: Install remaining dependencies
         run: lein deps
       - name: Check formatting
