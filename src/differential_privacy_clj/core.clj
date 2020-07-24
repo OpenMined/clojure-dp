@@ -109,7 +109,7 @@
     :delta - Delta DP parameter (ignored when Laplace noise is used).
 
     :noise - Distribution from which the noise will be generated and added
-             to the sum (e.g. `(GaussianNoise.)`).
+             to the sum (e.g. `(gaussian-noise)`).
              The Java library underneath will use `LaplaceNoise` by default.
 
     :chunk-size - Data is added in chunks of this size when specified.
@@ -158,7 +158,7 @@
     :delta - Delta DP parameter (ignored when Laplace noise is used).
 
     :noise - Distribution from which the noise will be generated and added
-             to the average (e.g. `(GaussianNoise.)`).
+             to the average (e.g. `(gaussian-noise)`).
              The Java library underneath will use `LaplaceNoise` by default.
 
     :chunk-size - Data is processed in chunks of this size when specified.
@@ -204,7 +204,7 @@
     :delta - Delta DP parameter (ignored when Laplace noise is used).
 
     :noise - Distribution from which the noise will be generated and added
-             to the average (e.g. `(GaussianNoise.)`).
+             to the count (e.g. `(gaussian-noise)`).
              The Java library underneath will use `LaplaceNoise` by default.
 
   "
